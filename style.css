@@ -1,0 +1,26 @@
+/* .region.bottom.left {
+	width: 700px;
+} */
+
+.table{
+    width: 600px;
+}
+
+.tbody{
+    width: 600px;
+}
+
+.namecell{
+
+    padding-right: 5px;
+    width: 150px;
+    text-align: left;
+    display: table-cell;
+}
+
+.valuecell{
+    padding-left: 3px;
+    width: 450px;
+    text-align: left;
+    display: table-cell;
+}
