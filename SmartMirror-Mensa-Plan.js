@@ -9,7 +9,7 @@
 
 'use strict';
 
-Module.register("smartmirror-mensa-plan", {
+Module.register("SmartMirror-Mensa-Plan", {
 
 	jsonData: null,
 
@@ -79,6 +79,12 @@ Module.register("smartmirror-mensa-plan", {
 		wrapper.appendChild(table);
 		return wrapper;
 	},
+
+
+	notificationReceived: function(notification, payload) {
+       	
+    },
+
 
 	getTableRow: function (jsonObject) {
 		var row = document.createElement("tr");
