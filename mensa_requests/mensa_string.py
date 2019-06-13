@@ -8,7 +8,7 @@ from datetime import timedelta
 import time
 import json
 import hashlib
-import sys
+import sys, os
 
 def to_node(type, message):
 	# convert to json and print (node helper will read from stdout)
@@ -31,7 +31,8 @@ url = 'http://www.studierendenwerk-bielefeld.de/essen-trinken/essen-und-trinken-
 
 offset = 0
 
-
+BASE_DIR = os.path.dirname(__file__) + '/'
+os.chdir(BASE_DIR)
 
 for v in sys.argv[1:]:
     if v[0]:
@@ -73,65 +74,88 @@ def parse_menu_week(tree):
             day_plan.update(dict({menu_type: type_list}))
         mensa_menus_week.insert(index, day_plan)
     return mensa_menus_week
+try:
+    page = requests.get(url)
+    tree = html.fromstring(page.content)
+    mensa_week = parse_menu_week(tree)
 
-page = requests.get(url)
-tree = html.fromstring(page.content)
-mensa_week = parse_menu_week(tree)
+    next_url = tree.find(".//div[@id='c1367']/div/a[2]")
+    if next_url is not None:
+        next_url = 'http://www.studierendenwerk-bielefeld.de' + next_url.attrib['href']
+        next_page = requests.get(next_url)
+        next_tree = html.fromstring(next_page.content)
+        mensa_week += parse_menu_week(next_tree)
 
-next_url = tree.find(".//div[@id='c1367']/div/a[2]")
-if next_url is not None:
-    next_url = 'http://www.studierendenwerk-bielefeld.de' + next_url.attrib['href']
-    next_page = requests.get(next_url)
-    next_tree = html.fromstring(next_page.content)
-    mensa_week += parse_menu_week(next_tree)
+    # print output
+    order = [u'Tagesmenü', u'Menü vegetarisch', u'Eintopf', u'Eintopf / Suppe', u'Mensa vital', u'Mensa kulinarisch', u'Aktions-Theke']
+    menus = list()
+    menu_ind = None
+    return_dict = []
+    menu_date = str((datetime.datetime.now() + timedelta(hours=offset)).strftime("%Y-%m-%d"))
 
-# print output
-order = [u'Tagesmenü', u'Menü vegetarisch', u'Eintopf', u'Eintopf / Suppe', u'Mensa vital', u'Mensa kulinarisch', u'Aktions-Theke']
-menus = list()
-menu_ind = None
-return_dict = []
-menu_date = str((datetime.datetime.now() + timedelta(hours=offset)).strftime("%Y-%m-%d"))
+    # select current date
+    for ind, d in enumerate(mensa_week):
+        if d['date'] == menu_date:
+            menus = d.copy()
+            menu_ind = ind
+            break
+    if(len(menus) is 0):
+        return_dict.append({"name": "NO MENSA!", "value": " "})
+        to_node('MensaPlan', [menu_date, return_dict])
+        quit()
 
-# select current date
-for ind, d in enumerate(mensa_week):
-    if d['date'] == menu_date:
-        menus = d.copy()
-        menu_ind = ind
-        break
-if(len(menus) is 0):
-    return_dict.append({"name": "NO MENSA!", "value": " "})
-    to_node('MensaPlan', [menu_date, return_dict])
-    quit()
+    for i in range(len(order)):
+        t = order[i]
+        for d in menus.pop(t, []):
+            if t in [u'Menü vegetarisch']:
+                t = 'Vegetarisch'
 
-for i in range(len(order)):
-    t = order[i]
-    for d in menus.pop(t, []):
-        if t in [u'Menü vegetarisch']:
-            t = 'Vegetarisch'
+            if t in ['Eintopf'] and d['sides']:
+                extra = ' (' + ', '.join(d['sides']) + ')'
 
-        if t in ['Eintopf'] and d['sides']:
-            extra = ' (' + ', '.join(d['sides']) + ')'
+            return_dict.append({ "name" : t , "value" : d['name']})
 
-        return_dict.append({ "name" : t , "value" : d['name']})
+    # rest
+    dessert = []
+    for d in menus.pop('Dessertbuffet', []):
+        dessert.append(d['name'])
 
-# rest
-dessert = []
-for d in menus.pop('Dessertbuffet', []):
-    dessert.append(d['name'])
-
-if (dessert is not []):
-    return_dict.append({"name" : 'Dessertbuffet', "value" : ', '.join(dessert)});
-
-
-# sides
-sides = []
-for i in mensa_week[menu_ind].get(u'Tagesmenü', []):
-    sides += i.get('sides')
-     #for i in mensa_week[menu_ind].get(u'Menü vegetarisch', []):
-#    sides += i.get('sides', '')
-if sides != []:
-    return_dict.append({"name": "Sides", "value": ', '.join(sides)})
-    #print('*{:s}:* _{:s}_'.format(u'Beilagen', ', '.join(set(sides)).encode('utf-8')))
+    if (dessert is not []):
+        return_dict.append({"name" : 'Dessertbuffet', "value" : ', '.join(dessert)});
 
 
-to_node('MensaPlan',[menu_date, return_dict] )
+    # sides
+    sides = []
+    for i in mensa_week[menu_ind].get(u'Tagesmenü', []):
+        sides += i.get('sides')
+         #for i in mensa_week[menu_ind].get(u'Menü vegetarisch', []):
+    #    sides += i.get('sides', '')
+    if sides != []:
+        return_dict.append({"name": "Sides", "value": ', '.join(sides)})
+        #print('*{:s}:* _{:s}_'.format(u'Beilagen', ', '.join(set(sides)).encode('utf-8')))
+
+    save_response = open("Mensa_response.txt", "w")
+    save_response.write(menu_date + "\n")
+    for line in return_dict:
+        save_response.write(json.dumps(line)+ "\n")
+    save_response.close()
+	
+except:
+	to_node("status", "not reachable.. returning saved string")
+	save_response = open("Mensa_response.txt", "r")
+
+	menu_date = save_response.readline()
+
+	return_dict = []
+
+	cnt = 1
+	line = save_response.readline()
+	while line:
+		jason_line = json.loads(line)
+		return_dict.append(jason_line)
+		line = save_response.readline()
+		cnt += 1
+	
+
+to_node('MensaPlan',[menu_date, return_dict])
+to_node("status", "Mensa plan updated")

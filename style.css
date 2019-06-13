@@ -24,3 +24,10 @@
     text-align: left;
     display: table-cell;
 }
+
+.xsmallMensa {
+  font-size: 17px;
+  line-height: 17px;
+  font-weight: 900;
+}
+

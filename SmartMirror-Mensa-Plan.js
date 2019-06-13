@@ -17,7 +17,7 @@ Module.register("SmartMirror-Mensa-Plan", {
 	defaults: {
 		mensa_parser: "",
 		hour_offset: 10,
-		updateInterval: 30000
+		updateInterval: 300000
 	},
 
 	start: function () {
@@ -51,7 +51,7 @@ Module.register("SmartMirror-Mensa-Plan", {
 	// Override dom generator.
 	getDom: function () {
 		var wrapper = document.createElement("div");
-		wrapper.className = "xsmall";
+		wrapper.className = "xsmallMensa";
 
 
 		if (!this.jsonData) {

@@ -14,7 +14,9 @@ module.exports = NodeHelper.create({
 
 		self.pyshell.on('message', function (message) {
 
-            if (message.hasOwnProperty('MensaPlan')) {
+            if (message.hasOwnProperty('status')){
+				console.log("[" + self.name + "] " + message.status);
+  			}else if (message.hasOwnProperty('MensaPlan')) {
             	obj_string = JSON.parse(JSON.stringify(message.MensaPlan))
 				self.sendSocketNotification("smartmirror-mensa-plan_JSON_RESULT", {mensa_parser: mensa_parser, data: obj_string});
             }
