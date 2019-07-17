@@ -1,0 +1,4 @@
+#ignore pyc...
+*.pyc
+
+mensa_requests/Mensa_response.txt
