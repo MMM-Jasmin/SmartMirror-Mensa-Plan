@@ -10,7 +10,7 @@ module.exports = NodeHelper.create({
 	getJson: function (mensa_parser, hour_offset) {
 		const self = this;
 
-		self.pyshell = new PythonShell('modules/' + this.name + '/mensa_requests/' + mensa_parser, { mode: 'json', args: hour_offset});
+		self.pyshell = new PythonShell('modules/' + this.name + '/mensa_requests/' + mensa_parser, { pythonPath: 'python3', mode: 'json', args: hour_offset});
 
 		self.pyshell.on('message', function (message) {
 

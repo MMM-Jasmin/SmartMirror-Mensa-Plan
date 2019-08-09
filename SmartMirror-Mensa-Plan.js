@@ -89,18 +89,18 @@ Module.register("SmartMirror-Mensa-Plan", {
 	getTableRow: function (jsonObject) {
 		var row = document.createElement("tr");
 
-		var namecell = document.createElement("namecell");
-		namecell.className = "namecell";
+		var namecell = document.createElement("namecellMensa");
+		namecell.className = "namecellMensa";
 		var cellText = document.createTextNode(jsonObject['name']);
-		cellText.className = "namecell";
+		cellText.className = "namecellMensa";
 		namecell.appendChild(cellText);
-		namecell.className =  "namecell";
+		namecell.className =  "namecellMensa";
 		row.appendChild(namecell);
 
-		var valuecell = document.createElement("valuecell");
-		valuecell.className = "valuecell";
+		var valuecell = document.createElement("valuecellMensa");
+		valuecell.className = "valuecellMensa";
 		var cellText = document.createTextNode(jsonObject['value']);
-		cellText.className ="valuecell";
+		cellText.className ="valuecellMensa";
 		valuecell.appendChild(cellText);
 		row.appendChild(valuecell);
 

@@ -10,7 +10,7 @@
     width: 600px;
 }
 
-.namecell{
+.namecellMensa{
 
     padding-right: 5px;
     width: 150px;
@@ -18,15 +18,15 @@
     display: table-cell;
 }
 
-.valuecell{
+.valuecellMensa{
     padding-left: 3px;
-    width: 450px;
+    width: 750px;
     text-align: left;
     display: table-cell;
 }
 
 .xsmallMensa {
-  font-size: 17px;
+  font-size: 15px;
   line-height: 17px;
   font-weight: 900;
 }
