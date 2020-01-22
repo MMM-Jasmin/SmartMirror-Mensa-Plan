@@ -44,6 +44,7 @@ Module.register("SmartMirror-Mensa-Plan", {
 			{
 				this.jsonData = payload.data;
 				this.updateDom(500);
+				this.sendNotification('MENSA_PLAN', payload.data)
 			}
 		}
 	},
