@@ -1,0 +1,11 @@
+2020-02-04
+{"name": "Tagesmen\u00fc", "value": "Schweineschnitzel mit Champignonrahmso\u00dfe"}
+{"name": "Vegetarisch", "value": "Sp\u00e4tzlepfanne mit Pilzen und Gem\u00fcse, dazu Paprikaso\u00dfe"}
+{"name": "Eintopf", "value": "Schnittbohneneintopf"}
+{"name": "Eintopf / Suppe", "value": "Pekingsuppe"}
+{"name": "Mensa vital", "value": "Karamellisiertes Putensteak mit Kartoffelp\u00fcree, Bratenjus und Sesam-Blumenkohl, dazu eine Banane"}
+{"name": "Aktions-Theke", "value": "H\u00e4hnchenbrust in Parmesan-Ei-H\u00fclle, dazu Bandnudeln und mediterranes Gem\u00fcse"}
+{"name": "Aktions-Theke", "value": "Ofenkartoffel mit Antipasti und Sauerrahm"}
+{"name": "Aktions-Theke", "value": "Ofenkartoffel mit Sour Cream und R\u00e4ucherlachs"}
+{"name": "Dessertbuffet", "value": "T\u00e4glich wechselnde Dessertvariationen., Hausgemachte Milchshakes"}
+{"name": "Sides", "value": "Rosmarinkartoffeln, Gem\u00fcse-Couscous, Erbsen-M\u00f6hrengem\u00fcse, Romanobohnen, Beilagensalate, G\u00f6tterspeise, Brombeer-Kokos-Quark, Karamell-Vanille-Pudding, Eis"}
