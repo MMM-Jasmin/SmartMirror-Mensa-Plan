@@ -109,7 +109,7 @@ Module.register("SmartMirror-Mensa-Plan", {
 	},
 
 	 getStyles: function () {
-        return ['style.css'];
+        return ['mensa_style.css'];
     }
 
 });
