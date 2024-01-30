@@ -7,27 +7,24 @@ module.exports = NodeHelper.create({
 		console.log('MMM-JsonTable helper started...');
 	},
 
-	getJson: function (mensa_parser, hour_offset) {
+	getMensaJSON: function (){
 		const self = this;
 
-		self.pyshell = new PythonShell('modules/' + this.name + '/mensa_requests/' + mensa_parser, { pythonPath: 'python3', mode: 'json', args: hour_offset});
+		console.log("Mensa request to Studierendenwerk!");
+		self.pyshell = new PythonShell('modules/' + this.name + '/mensa_requests/mensa_json.py', { pythonPath: 'python3', mode: 'json'});
 
 		self.pyshell.on('message', function (message) {
-
-            if (message.hasOwnProperty('status')){
-				console.log("[" + self.name + "] " + message.status);
-  			}else if (message.hasOwnProperty('MensaPlan')) {
-            	obj_string = JSON.parse(JSON.stringify(message.MensaPlan))
-				self.sendSocketNotification("smartmirror-mensa-plan_JSON_RESULT", {mensa_parser: mensa_parser, data: obj_string});
-            }
-
+			//console.log(message)
+			self.sendSocketNotification("smartmirror-mensa-plan_JSON_RESULT", message);
         });
 	},
 
 	//Subclass socketNotificationReceived received.
 	socketNotificationReceived: function (notification, arg) {
+		console.log("socketNotification");
 		if (notification === "smartmirror-mensa-plan_GET_JSON") {
-			this.getJson(arg[0], arg[1]);
+			console.log("smartmirror-mensa-plan_GET_JSON got called");
+			this.getMensaJSON();
 		}
 	},
 
@@ -42,4 +39,3 @@ module.exports = NodeHelper.create({
 		});
 	}
 });
-

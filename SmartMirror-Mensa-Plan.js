@@ -13,86 +13,91 @@ Module.register("SmartMirror-Mensa-Plan", {
 
 	jsonData: null,
 
-	// Default module config.
 	defaults: {
-		mensa_parser: "",
-		hour_offset: 10,
 		updateInterval: 300000
 	},
 
 	start: function () {
-		this.getJson();
-		this.scheduleUpdate();
+		var self = this;
+		self.getMensaJSON();
+		self.scheduleUpdate();
 	},
 
 	scheduleUpdate: function () {
 		var self = this;
 		setInterval(function () {
-			self.getJson();
-		}, this.config.updateInterval);
+			self.getMensaJSON();
+		}, self.config.updateInterval);
 	},
 
 	// Request node_helper to get json from a mensa parser script
-	getJson: function () {
-		this.sendSocketNotification("smartmirror-mensa-plan_GET_JSON", [this.config.mensa_parser, this.config.hour_offset]);
+	getMensaJSON: function () {
+		var self = this;
+		self.sendSocketNotification("smartmirror-mensa-plan_GET_JSON", "");
 	},
 
 	socketNotificationReceived: function (notification, payload) {
+		var self = this;
 		if (notification === "smartmirror-mensa-plan_JSON_RESULT") {
-			// Only continue if the notification came from the request we made
-			if (payload.mensa_parser === this.config.mensa_parser)
-			{
-				this.jsonData = payload.data;
-				this.updateDom(500);
-				this.sendNotification('MENSA_PLAN', payload.data)
-			}
+			self.jsonData = payload;
+			self.updateDom(10);
+			//console.log(payload);
 		}
 	},
 
-	// Override dom generator.
 	getDom: function () {
 		var wrapper = document.createElement("div");
-		wrapper.className = "xsmallMensa";
-
+		wrapper.className = "small";
 
 		if (!this.jsonData) {
 			wrapper.innerHTML = "Awaiting json data...";
-			return wrapper;
+		}else{
+
+			var table = document.createElement("table");
+			var tbody = document.createElement("tbody");
+	
+			table.className = "table";
+			table.className = "tbody";
+		
+			for(var key in this.jsonData.mains){
+				var menu_point = this.jsonData.mains[key].name;
+				if (this.jsonData.mains[key].side.length > 0){
+					menu_point = menu_point + " mit "
+					if (this.jsonData.mains[key].side.length > 1){
+						menu_point = menu_point + this.jsonData.mains[key].side.slice(0, -1).join(", ") + ' oder ' + this.jsonData.mains[key].side.slice(-1)
+					} else {
+						menu_point = menu_point + this.jsonData.mains[key].side
+					}
+				}
+				var row = this.createMensaRow(key, menu_point);
+				tbody.appendChild(row);
+			}
+
+			for(var key in this.jsonData.sides){
+				if (this.jsonData.sides[key].length > 1){
+					var menu_point = this.jsonData.sides[key].slice(0, -1).join(", ") + ' oder ' + this.jsonData.sides[key].slice(-1)
+				}else{
+					var menu_point =this.jsonData.sides[key].join(", ");
+				}
+				var row = this.createMensaRow(key,menu_point);
+				tbody.appendChild(row);
+			}
+			table.appendChild(tbody);
+			wrapper.appendChild(table);
 		}
-
-		var table = document.createElement("table");
-		var tbody = document.createElement("tbody");
-
-		table.className = "table";
-		table.className = "tbody";
-
-		var items = this.jsonData[1];
-		this.data.header = 'Mensa Menu - Uni Bielefeld (X building) - ' + this.jsonData[0];
-
-
-		items.forEach(element => {
-			var row = this.getTableRow(element);
-			row.className = "tablerow";
-			tbody.appendChild(row);
-		});
-
-		table.appendChild(tbody);
-		wrapper.appendChild(table);
-		return wrapper;
+		return wrapper;		
 	},
-
 
 	notificationReceived: function(notification, payload) {
        	
     },
 
-
-	getTableRow: function (jsonObject) {
+	createMensaRow:  function (name, value) {
 		var row = document.createElement("tr");
-
+		
 		var namecell = document.createElement("namecellMensa");
 		namecell.className = "namecellMensa";
-		var cellText = document.createTextNode(jsonObject['name']);
+		var cellText = document.createTextNode(name);
 		cellText.className = "namecellMensa";
 		namecell.appendChild(cellText);
 		namecell.className =  "namecellMensa";
@@ -100,11 +105,11 @@ Module.register("SmartMirror-Mensa-Plan", {
 
 		var valuecell = document.createElement("valuecellMensa");
 		valuecell.className = "valuecellMensa";
-		var cellText = document.createTextNode(jsonObject['value']);
+		var cellText = document.createTextNode(value);
 		cellText.className ="valuecellMensa";
 		valuecell.appendChild(cellText);
 		row.appendChild(valuecell);
-
+		
 		return row;
 	},
 

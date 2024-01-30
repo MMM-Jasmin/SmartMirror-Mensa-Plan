@@ -3,11 +3,11 @@
 } */
 
 .table{
-    width: 650px;
+    width: 500px;
 }
 
 .tbody{
-    width: 650px;
+    width: 500px;
 }
 
 .namecellMensa{
@@ -15,19 +15,11 @@
     width: 150px;
     text-align: left;
     display: table-cell;
-
 }
 
 .valuecellMensa{
     padding-left: 3px;
-    width: 550px;
+    width: 320px;
     text-align: left;
     display: table-cell;
-}
-
-.xsmallMensa {
-  font-size: 20px;
-  line-height: 20px;
-  font-weight: 900;
-  color: #fff
 }
